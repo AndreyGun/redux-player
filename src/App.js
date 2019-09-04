@@ -1,26 +1,44 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App  extends Component {
+
+    addTrack = () => {
+        console.log('addTrack ', this.trackInput.value);
+        this.props.onAddTrack( this.trackInput.value );
+        this.trackInput.value = '';
+    }
+
+    render() {
+        console.log(this.props.testStore);
+        return(
+            <div>
+                <input type="text" ref={(input) => {this.trackInput = input}} ></input>
+                <button 
+                    onClick={this.addTrack}>
+                    Add track</button>
+                <ul>
+                    {this.props.testStore.map((track, index) => 
+                        <li key={index} >{track}</li>
+                    )}
+                </ul>
+            </div>
+        );
+    }
 }
 
-export default App;
+const mapStateToProps = (state) => {
+    return {
+        testStore: state
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return{
+        onAddTrack: (trackName) => {
+            dispatch({type: 'ADD_TRACK', payload: trackName})
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
