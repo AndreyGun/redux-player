@@ -8,18 +8,29 @@ class App  extends Component {
         this.props.onAddTrack( this.trackInput.value );
         this.trackInput.value = '';
     }
-
+    findTrack = () => {
+        console.log(this.searchInput.value);
+        this.props.onFindTrack( this.searchInput.value );
+    }
     render() {
-        console.log(this.props.testStore);
+        console.log(this.props.tracks);
         return(
             <div>
-                <input type="text" ref={(input) => {this.trackInput = input}} ></input>
-                <button 
-                    onClick={this.addTrack}>
-                    Add track</button>
+                <div>
+                    <input type="text" ref={(input) => {this.trackInput = input}} ></input>
+                    <button 
+                        onClick={this.addTrack}>
+                        Add track</button>
+                </div>
+                <div>
+                    <input type="text" ref={(input) => {this.searchInput = input}} ></input>
+                    <button 
+                        onClick={this.findTrack}>
+                        Find track</button>
+                </div>
                 <ul>
-                    {this.props.testStore.map((track, index) => 
-                        <li key={index} >{track}</li>
+                    {this.props.tracks.map((track, index) => 
+                        <li key={index} >{track.title}</li>
                     )}
                 </ul>
             </div>
@@ -27,16 +38,23 @@ class App  extends Component {
     }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = ({ tracks, filterTracks }) => {
     return {
-        testStore: state
+        tracks: tracks.filter( track => track.title.includes(filterTracks) )
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return{
-        onAddTrack: (trackName) => {
-            dispatch({type: 'ADD_TRACK', payload: trackName})
+        onAddTrack: (title) => {
+            const payload = {
+                id: Date.now().toString(),
+                title
+            }
+            dispatch({type: 'ADD_TRACK', payload})
+        },
+        onFindTrack: (title) => {
+            dispatch({type: 'FIND_TRACK', payload: title})
         }
     }
 }
